@@ -10,7 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *  record to represent a migration data entry object
+ * record to represent a migration data entry object
+ *
  * @author rf922
  */
 public record MigrationData(

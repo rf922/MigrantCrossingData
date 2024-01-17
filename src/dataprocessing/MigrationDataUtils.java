@@ -17,6 +17,16 @@ import java.util.function.Function;
  */
 public class MigrationDataUtils {
 
+    /**
+     * Method to collect and group data entries by a field. Accepts a list of 
+     * migration data entries, a function for key extraction. The function returns a map
+     * of keys and a list of corresponding migration data entries.
+     * 
+     * @param <K>
+     * @param dataList
+     * @param keyExtractor
+     * @return 
+     */
     public static <K extends Comparable<K>> Map<K, List<MigrationData>> groupByField(
         List<MigrationData> dataList,
         Function<MigrationData, K> keyExtractor) {
