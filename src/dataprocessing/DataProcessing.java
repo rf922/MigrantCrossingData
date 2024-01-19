@@ -8,6 +8,7 @@ package dataprocessing;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,24 +44,8 @@ public class DataProcessing {
             String header = csvReader.readLine();
             int taskCount = 0;
 
-            /**
-             * Listing the Col Entries *
-             */
-            /**
-             * System.out.println(header.split(";").length); for (var col :
-             * header.split(";")) { System.out.println(col); }
-            *
-             */
             for (String line; (line = csvReader.readLine()) != null;) {
 
-                /* Testing / finding malformed entries
-                if(line.split(";", -1).length != 23){
-                    System.out.println("[ MAIN ] : MALFORMED ENTRY FOUND \n"+line);
-                    System.out.println("[ MAIN ] : FIELDS FOUND  \n"+line.split(";").length);
-                    malformedList.add(line);
-                    continue;
-                }
-                 */
                 String finalLine = line;
                 completionService.submit(() -> MigrationData.parseLine(finalLine));
                 taskCount++;
@@ -72,13 +57,27 @@ public class DataProcessing {
             }
 
             Map<String, List<MigrationData>> incidentsByCountry
-                = MigrationDataUtils.groupByField(dataList, MigrationData::paisIncidente);
-            //incidentsByCountry.forEach((x, y) -> {System.out.println(x + " " +y.size());});
-
-            int deaths = incidentsByCountry.get("Mexico").stream().mapToInt(x -> x.muertos()).sum();
-
-            incidentsByCountry.get("Mexico").stream().filter(x -> x.mujeres() > 1).forEach(System.out::println);
-
+                = MigrationDataUtils.groupByField(dataList, MigrationData::incidentCountry);
+            Map<Integer, List<MigrationData>> incidentsByYear = MigrationDataUtils.groupByField(dataList, x -> x.incidentDate().getYear());
+            
+            int deaths = incidentsByCountry.get("Mexico").stream().mapToInt(x -> x.numberDead()).sum();
+            
+            incidentsByYear.forEach((x, y) -> {
+                
+                Integer yearDeathTotal = y.stream().mapToInt(entry -> entry.numberDead()).sum();
+                Integer yearMissingTotal = y.stream().mapToInt(entry -> entry.numberMissing()).sum();
+                Integer womenD = y.stream().mapToInt(entry -> entry.numberWomen()).sum();
+                String sf = String.format("%s\n%d\n%s\t%d\n%s\t%d\n%s", 
+                    "--------------------------------------------------",
+                    x, 
+                    "Death Total : ",yearDeathTotal,
+                    "Total Dissappearances : ", yearMissingTotal,
+                    
+                    "--------------------------------------------------");
+                
+                System.out.println(sf);
+            });
+            
             System.out.println(deaths);
 
         } catch (Exception ex) {

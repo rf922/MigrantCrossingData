@@ -16,27 +16,27 @@ import java.util.regex.Pattern;
  */
 public record MigrationData(
     String id,
-    LocalDate fecha,
+    LocalDate incidentDate,
     String region,
-    String rutaMigratoria,
-    String causaDeLaMuerte,
-    Integer muertos,
-    Integer desaparecidos,
-    Integer mujeres,
-    Integer hombres,
-    Integer menores,
-    Integer supervivientes,
-    String regionIncidente,
-    String paisIncidente,
-    String regionOrigen,
-    String paisOrigen,
-    String titular,
-    String fuenteDeInformacion,
-    String localizacion,
+    String migrationRoute,
+    String causeOfDeath,
+    Integer numberDead,
+    Integer numberMissing,
+    Integer numberWomen,
+    Integer numberMen,
+    Integer numberChildern,
+    Integer survivors,
+    String inccidentRegion,
+    String incidentCountry,
+    String regionofOrigin,
+    String countryOfOrigin,
+    String headline,
+    String informationSource,
+    String localization,
     String urls,
-    String urlDetalle,
-    Double latitud,
-    Double longitud) implements Comparable<MigrationData> {
+    String urlDetail,
+    Double latitude,
+    Double longitude) implements Comparable<MigrationData> {
 
     private static LocalDate parseDate(String dateString) {
         try {
@@ -64,7 +64,7 @@ public record MigrationData(
 
     @Override
     public int compareTo(MigrationData other) {
-        return this.fecha.compareTo(other.fecha);
+        return this.incidentDate.compareTo(other.incidentDate);
     }
 
     public static MigrationData parseLine(String line) {
