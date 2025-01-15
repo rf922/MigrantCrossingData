@@ -59,11 +59,11 @@ public class MigrationData {
                 = MigrationDataUtils.groupByField(dataList, MigrationDataEntry::getIncidentCountry);
             //incidentsByCountry.forEach((x, y) -> {System.out.println(x + " " +y.size());});
 
-            int deaths = incidentsByCountry.get("Mexico").stream().mapToInt(x -> x.getDead()).sum();
+    //        int deaths = incidentsByCountry.get("Mexico").stream().mapToInt(x -> x.getDead()).sum();
 
-            incidentsByCountry.get("Mexico").stream().filter(x -> x.getWomen() > 1).forEach(System.out::println);
+  //          incidentsByCountry.get("Mexico").stream().filter(x -> x.getWomen() > 1).forEach(System.out::println);
 
-            System.out.println(deaths);
+//            System.out.println(deaths);
 
         } catch (Exception ex) {
             System.out.println(ex);
@@ -72,18 +72,17 @@ public class MigrationData {
             System.out.println(" [ MAIN ] : DataList Size " + dataList.size());
             System.out.println(" [ MAIN ] : Malformed Size " + malformedList.size());
 
-            /**
-             * DEBUGGING entries long lackingFields =
-             * malformedList.stream().filter(x -> x.split(";", -1).length < 23).count();
-             * long surplusFields = malformedList.size() - lackingFields;
-             * System.out.println("[ MAIN ] : Lacking Fields "+lackingFields);
-             * System.out.println("[ MAIN ] : Surplus Fields "+surplusFields);
-             * malformedList.stream().filter(x -> x.split(";", -1).length >
-             * 23).map(x -> x.split(";",
-             * -1).length).distinct().forEach(System.out::println);
-             * malformedList.stream().filter(x -> x.split(";", -1).length >
-             * 23).limit(15).forEach(System.out::println);
-             */
+              long lackingFields =
+              malformedList.stream().filter(x -> x.split(";", -1).length < 23).count();
+              long surplusFields = malformedList.size() - lackingFields;
+              System.out.println("[ MAIN ] : Lacking Fields "+lackingFields);
+              System.out.println("[ MAIN ] : Surplus Fields "+surplusFields);
+//              malformedList.stream().filter(x -> x.split(";", -1).length >
+    //          23).map(x -> x.split(";",
+      //        -1).length).distinct().forEach(System.out::println);
+              malformedList.stream().filter(x -> x.split(";", -1).length >
+              23).limit(15).forEach(System.out::println);
+             
         }
     }
    

@@ -22,18 +22,12 @@ import java.util.concurrent.Future;
  * @author rf922
  */
 public class DataProcessing {
-    private static String DATA_SET = "data/migrantsMissing08112021.csv";
+    private static final String DATA_SET = "data/migrantsMissing08112021.csv";
     
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
-        int threadCount = Runtime.getRuntime().availableProcessors();
-        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-        CompletionService<MigrationData> completionService = new ExecutorCompletionService<>(executor);
-        List<MigrationData> dataList = new LinkedList<>();
-        List<String> malformedList = new ArrayList<>();
         MigrationData.loadData(DATA_SET);
 
     }

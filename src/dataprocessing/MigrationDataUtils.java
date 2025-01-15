@@ -25,6 +25,8 @@ public class MigrationDataUtils {
     
     private static final String DATE_FORMAT = "dd/MM/yyyy";
     private static final String LINE_REGEX = "(?<=^|;)(\"(?:[^\"]|\"\")*\"|[^;]*)";
+    private static final String DELIMITER = ";";
+    private static final int NUM_FIELDS = 23;
     
     public static LocalDate parseDate(String dateString) {
         try { 
@@ -117,15 +119,17 @@ public class MigrationDataUtils {
     }
     
     /**
-     * Handles splitting lines 
+     * Handles splitting lines , cleaning data
      * @param line
      * @return 
      */
-    private static String[] splitLine(String line) {
+    public static String[] splitLine(String line) {
         List<String> fields = new ArrayList<>();
         Matcher matcher = Pattern.compile(LINE_REGEX).matcher(line);
         while (matcher.find()) {
-            fields.add(matcher.group(1).replaceAll("^\"|\"$", "").replace("\"\"", "\""));
+            fields.add(matcher.group(1)
+                .replaceAll("^\"|\"$", "")
+                .replace("\"\"", "\""));
         }
         return fields.toArray(String[]::new);
 
@@ -133,6 +137,6 @@ public class MigrationDataUtils {
     
     
     public static boolean malformedEntryTest(String line){
-        return line.split(";", -1).length != 23;
+        return line.split(DELIMITER, -1).length < NUM_FIELDS;
     }
 }
