@@ -1,113 +1,91 @@
+/**
+ * 
+ * File : MigrationData.java
+ * 
+ * 
+*/
 package dataprocessing;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import dataprocessing.model.MigrationDataEntry;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
- * record to represent a migration data entry object
+ * Class to load data from csv 
  *
  * @author rf922
  */
-public record MigrationData(
-    String id,
-    LocalDate fecha,
-    String region,
-    String rutaMigratoria,
-    String causaDeLaMuerte,
-    Integer muertos,
-    Integer desaparecidos,
-    Integer mujeres,
-    Integer hombres,
-    Integer menores,
-    Integer supervivientes,
-    String regionIncidente,
-    String paisIncidente,
-    String regionOrigen,
-    String paisOrigen,
-    String titular,
-    String fuenteDeInformacion,
-    String localizacion,
-    String urls,
-    String urlDetalle,
-    Double latitud,
-    Double longitud) implements Comparable<MigrationData> {
+public class MigrationData {
+    
+    private String MALFORMED_DATA = "malformedEntries.csv";
 
-    private static LocalDate parseDate(String dateString) {
-        try {
-            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        } catch (DateTimeParseException e) {
-            return LocalDate.MIN; // or a default date
+    public static void loadData(String csv) {
+        int threadCount = Runtime.getRuntime().availableProcessors();
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        CompletionService<MigrationDataEntry> completionService = new ExecutorCompletionService<>(executor);
+        List<MigrationDataEntry> dataList = new LinkedList<>();
+        List<String> malformedList = new ArrayList<>();
+        
+        try (BufferedReader csvReader = new BufferedReader(new FileReader(csv))) {
+            String header = csvReader.readLine();
+            int taskCount = 0;
+            for (String line; (line = csvReader.readLine()) != null;) {
+
+                if (MigrationDataUtils.malformedEntryTest(line)) {
+                    malformedList.add(line);
+                    continue;
+                }
+                
+                String finalLine = line;
+                completionService.submit(() -> MigrationDataUtils.parseLine(finalLine));
+                taskCount++;
+            }
+
+            for (int i = 0; i < taskCount; i++) {
+                Future<MigrationDataEntry> future = completionService.take();
+                dataList.add(future.get());
+            }
+
+            Map<String, List<MigrationDataEntry>> incidentsByCountry
+                = MigrationDataUtils.groupByField(dataList, MigrationDataEntry::getIncidentCountry);
+            //incidentsByCountry.forEach((x, y) -> {System.out.println(x + " " +y.size());});
+
+            int deaths = incidentsByCountry.get("Mexico").stream().mapToInt(x -> x.getDead()).sum();
+
+            incidentsByCountry.get("Mexico").stream().filter(x -> x.getWomen() > 1).forEach(System.out::println);
+
+            System.out.println(deaths);
+
+        } catch (Exception ex) {
+            System.out.println(ex);
+        } finally {
+            executor.shutdown();
+            System.out.println(" [ MAIN ] : DataList Size " + dataList.size());
+            System.out.println(" [ MAIN ] : Malformed Size " + malformedList.size());
+
+            /**
+             * DEBUGGING entries long lackingFields =
+             * malformedList.stream().filter(x -> x.split(";", -1).length < 23).count();
+             * long surplusFields = malformedList.size() - lackingFields;
+             * System.out.println("[ MAIN ] : Lacking Fields "+lackingFields);
+             * System.out.println("[ MAIN ] : Surplus Fields "+surplusFields);
+             * malformedList.stream().filter(x -> x.split(";", -1).length >
+             * 23).map(x -> x.split(";",
+             * -1).length).distinct().forEach(System.out::println);
+             * malformedList.stream().filter(x -> x.split(";", -1).length >
+             * 23).limit(15).forEach(System.out::println);
+             */
         }
     }
+   
 
-    private static Integer parseInteger(String intString) {
-        try {
-            return Integer.parseInt(intString);
-        } catch (NumberFormatException e) {
-            return -1; // or a default value
-        }
-    }
-
-    private static Double parseDouble(String doubleString) {
-        try {
-            return Double.parseDouble(doubleString);
-        } catch (NumberFormatException e) {
-            return -1.0; // or a default value
-        }
-    }
-
-    @Override
-    public int compareTo(MigrationData other) {
-        return this.fecha.compareTo(other.fecha);
-    }
-
-    public static MigrationData parseLine(String line) {
-        String[] entries = splitLine(line);
-
-        String id = entries[0];
-        LocalDate fecha = parseDate(entries[2]);
-        String region = entries[3];
-        String rutaMigratoria = entries[4];
-        String causaDeLaMuerte = entries[5];
-        Integer muertos = parseInteger(entries[6]);
-        Integer desaparecidos = parseInteger(entries[7]);
-        Integer mujeres = parseInteger(entries[8]);
-        Integer hombres = parseInteger(entries[9]);
-        Integer menores = parseInteger(entries[10]);
-        Integer supervivientes = parseInteger(entries[11]);
-        String regionIncidente = entries[12];
-        String paisIncidente = entries[13];
-        String regionOrigen = entries[14];
-        String paisOrigen = entries[15];
-        String titular = entries[16];
-        String fuenteDeInformacion = entries[17];
-        String localizacion = entries[18];
-        String urls = entries[19];
-        String urlDetalle = entries[20];
-        Double latitud = parseDouble(entries[21]);
-        Double longitud = parseDouble(entries[22]);
-        return new MigrationData(
-            id, fecha, region, rutaMigratoria, causaDeLaMuerte,
-            muertos, desaparecidos, mujeres, hombres, menores, supervivientes,
-            regionIncidente, paisIncidente, regionOrigen, paisOrigen,
-            titular, fuenteDeInformacion, localizacion, urls, urlDetalle,
-            latitud, longitud
-        );
-    }
-
-    private static String[] splitLine(String line) {
-        List<String> fields = new ArrayList<>();
-        Matcher matcher = Pattern.compile("(?<=^|;)(\"(?:[^\"]|\"\")*\"|[^;]*)").matcher(line);
-        while (matcher.find()) {
-            fields.add(matcher.group(1).replaceAll("^\"|\"$", "").replace("\"\"", "\""));
-        }
-        return fields.toArray(String[]::new);
-
-    }
 }
