@@ -1,6 +1,6 @@
 /**
  * 
- * File : MigrationData.java
+ * File : MigrationDataLoader.java
  * 
  * 
 */
@@ -24,11 +24,11 @@ import java.util.concurrent.Future;
  *
  * @author rf922
  */
-public class MigrationData {
+public class MigrationDataLoader {
     
     private String MALFORMED_DATA = "malformedEntries.csv";
 
-    public static void loadData(String csv) {
+    public static List<MigrationDataEntry> loadData(String csv) {
         int threadCount = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         CompletionService<MigrationDataEntry> completionService = new ExecutorCompletionService<>(executor);
@@ -82,7 +82,7 @@ public class MigrationData {
       //        -1).length).distinct().forEach(System.out::println);
               malformedList.stream().filter(x -> x.split(";", -1).length >
               23).limit(15).forEach(System.out::println);
-             
+             return dataList;
         }
     }
    

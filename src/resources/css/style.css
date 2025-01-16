@@ -1,0 +1,14 @@
+/*
+* File : style.css 
+*/
+
+.label-style {
+    -fx-text-fill: #4CAF50; /* Green text color */
+    -fx-background-color: #f0f0f0; /* Light background */
+    -fx-padding: 20px; /* Padding around the label */
+    -fx-font-size: 20px; /* Font size */
+    -fx-font-weight: bold; /* Bold text */
+    -fx-border-radius: 5px; /* Rounded corners */
+    -fx-border-color: #4CAF50; /* Green border color */
+    -fx-border-width: 2px; /* Border width */
+}
