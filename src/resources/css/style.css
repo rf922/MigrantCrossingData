@@ -1,0 +1,66 @@
+/*
+* File : style.css 
+*/
+
+.label-style {
+    -fx-text-fill: #4CAF50; /* Green text color */
+    -fx-background-color: #f0f0f0; /* Light background */
+    -fx-padding: 20px; /* Padding around the label */
+    -fx-font-size: 20px; /* Font size */
+    -fx-font-weight: bold; /* Bold text */
+    -fx-border-radius: 5px; /* Rounded corners */
+    -fx-border-color: #4CAF50; /* Green border color */
+    -fx-border-width: 2px; /* Border width */
+}
+
+/* Styling for the status bar */
+.status-bar {
+    -fx-background-color: #EEE; /* Light gray background */
+    -fx-padding: 1px; /* Padding */
+    -fx-border-color: #CCCCCC; /* Light gray border color */
+    -fx-border-width: 1px; /* Thin border */
+    -fx-border-style: solid; /* Solid border style */
+    -fx-alignment: center-left; /* Align text to the left */
+}
+
+/* Styling the MenuBar */
+.menu-bar {
+    -fx-background-color: slategray;
+    -fx-text-fill: antiquewhite;
+    -fx-padding: 1px; /* Add padding */
+    -fx-border-width: 1px; /* Border width */
+}
+
+/* Styling the individual menus */
+.menu, .menu:selected{
+    -fx-text-fill: white; /* White text for menus */
+    -fx-font-weight: bold; /* Bold text */
+    -fx-background-color: transparent; /* Default background */
+}
+
+/* Add hover effect with transition */
+.menu:hover {
+    -fx-background-color: #888; /* Medium gray background */
+    -fx-text-fill: white; /* Change text color on hover */
+    -fx-background-color: transparent; /* Default background */
+
+    -fx-transition: background-color 0.3s ease;
+ }
+
+
+/* Styling the menu items */
+.menu-item {
+    -fx-text-fill:  #f0f0f0;
+}
+
+/* Add hover effect with transition */
+.menu-item:hover {
+    -fx-background-color: #888; /* Medium gray background */
+    -fx-text-fill: white; /* Change text color on hover */
+ }
+ 
+ /* Tab Styling */
+ .tab-pane .tab:selected {
+    -fx-background-color: #4CAF50; /* Green background for selected tab */
+    -fx-text-fill: white; /* White text for selected tab */
+}
