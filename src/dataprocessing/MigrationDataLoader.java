@@ -55,16 +55,6 @@ public class MigrationDataLoader {
                 dataList.add(future.get());
             }
 
-            Map<String, List<MigrationDataEntry>> incidentsByCountry
-                = MigrationDataUtils.groupByField(dataList, MigrationDataEntry::getIncidentCountry);
-            //incidentsByCountry.forEach((x, y) -> {System.out.println(x + " " +y.size());});
-
-    //        int deaths = incidentsByCountry.get("Mexico").stream().mapToInt(x -> x.getDead()).sum();
-
-  //          incidentsByCountry.get("Mexico").stream().filter(x -> x.getWomen() > 1).forEach(System.out::println);
-
-//            System.out.println(deaths);
-
         } catch (Exception ex) {
             System.out.println(ex);
         } finally {
