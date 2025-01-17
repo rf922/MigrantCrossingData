@@ -1,3 +1,6 @@
+/**
+ * File : Main.java
+ */
 package gui;
 
 import dataprocessing.MigrationDataLoader;
@@ -183,6 +186,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        
+        primaryStage.getIcons().add(new javafx.scene.image.Image("/resources/images/icon.png"));
+        
         // Fetch the data list size
         //String dataListSize = getDataListSize();
 
